@@ -1,9 +1,8 @@
-/*******************************************************
-    > File Name: promise-relearn-with-es2015.js
-    > Author: IndexXuan
-    > Mail: indexxuan@gmail.com
-    > Created Time: 2015年12月11日 星期五 08时12分28秒
- ******************************************************/
+/*
+ * author IndexXuan
+ * home   https://github.com/IndexXuan/V-2-V5/blob/master/promise-relearn-with-es2015.js
+ * date   2015.12
+ */
 
 let promise = new Promise( (resolve, reject) => {
   setTimeout( () => {
@@ -440,4 +439,395 @@ notifyMessageAsPromise("Hi!").then( (notification) => {
 });
 
 // 20. Web Notification API as thenable
+function notifyMessage(message, options, callback) {
+  if (Notification && Notification.permission === 'granted') {
+    let notification = new Notification(message, options);
+    callback(null, notification);
+  } else if (Notification.requestPermission) {
+    Notification.requestPermission( (status) => {
+      if (Notification.permission !== status) {
+        Notification.permission = status;
+      }
+      if (status === 'granted') {
+        let notification = new Notification(message, options);
+        callback(null, notification);
+      } else {
+        callback(new Error('user denied'));
+      }
+    });
+  } else {
+    callback(new Error('doesn\'t support Notification API'));
+  }
+}
+// 返回`thenable`
+function notifyMessageAsThenable(message, options) {
+  return {
+    then(resolve, reject) {
+      notifyMessage(message, options, (error, notification) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(notification);
+        }
+      });
+    }
+  };
+}
+// 运行示例
+Promise.resolve(notifyMessageAsThenable("message")).then( (notification) => {
+  console.log(notification); // 通知对象
+}).catch( (error) => {
+  console.error(error);
+});
+
+// 21. prmise to Q-promise
+// 不同类库以及native promise环境下可以通过thenable来共通
+// Thenable多在类内部实现中使用，所以从外部来说不会经常看到Thenable的
+// 使用，但是我们必须牢牢记住Thenable是Promise中一个非常重要的概念
+const Q = require("Q");
+// 这是ES6的promise对象
+let promise = new Promise( (resolve) => {
+  resolve(1);
+});
+// 变换为Q promise对象
+Q(promise).then( (value) => {
+  console.log(value);
+}).finally( () => {
+  console.log("finally");
+});
+
+// 22. 使用reject而不是throw
+let promise = new Promise( (resolve, reject) => {
+  throw new Error("message");
+});
+promise.catch( (error) => {
+  console.error(error); // => "message"
+});
+
+// 可以改写为这样
+let promise2 = new Promise( (resolve, reject) => {
+  reject(new Error("message"));
+});
+promise2.catch( (error) => {
+  console.error(error); // "message"
+});
+
+// 使用reject更为合理，原因在于我们很难区分throw是我们主动抛出来的还是
+// 因为`真正的异常`导致的。而且在调试工具里，throw会引起异常的break行为
+// 使其被捕获。
+
+// 23. 在then中使用reject
+let onRejected = console.log.bind(console);
+let promise = Promise.resolve();
+promise.then( () => {
+  var retPromise = new Promise( (resolve, reject) => {
+    reject(new Error("this promise is rejected"));
+  });
+  return retPromise;
+}).catch(onRejected);
+
+let onRejected2 = console.error.bind(console);
+let promise2 = Promise.resolve();
+promise2.then( () => {
+  return Promise.reject(new Error("this promise is rejected in then"));
+}).catch(onRejected);
+
+// 24. deferred
+// Deferred的话不需要将代码用Promise括起来
+// 由于没有被嵌套在函数中，可以减少一层缩进
+// 反过来没有Promise里的错误逻辑处理
+// 调用resolve和reject的时机，函数都返回了promise对象
+// 由于Deferred包含了promise，所以大体流程还是差不多的，不过Deferred有用对Promise
+// 进行操作的特权方法，以及高度自由的对流程控制进行定制
+function Deferred() {
+  this.promise = new Promise( (resolve, reject) => {
+    this._resolve = resolve;
+    this._reject = reject;
+  }.bind(this));
+}
+Deferred.prototype.resolve = function(value) {
+  this._resolve.call(this.promise, value);
+};
+Deferred.prototype.reject = function(reason) {
+  this._reject.call(this.promise, reason);
+};
+
+function getURL(url) {
+  const OK = 200;
+  let deferred = new Deferred();
+  let req = new XMLHttpRequest();
+  req.open('GET', url, true);
+  req.onload = function () {
+    if (req.status === OK) {
+      deferred.resolve(req.responseText);
+    } else {
+      deferred.reject(new Error(req.statusText));
+    }
+  };
+  req.onerror = function() {
+    deferred.reject(new Error(req.statusText));
+  };
+  req.send();
+  return deferred.promise;
+}
+
+// 运行示例
+const URL = 'http://httpbin.org/get';
+getURL(URL).then( (value) => {
+  console.log(value);
+}).catch(console.error.bind(console));
+
+// 25. Deferred与Promise的区别
+new Promise( (resolve, reject) => {
+  // 在这里进行promise对象的状态确定
+});
+var deferred = new Deferred();
+// 可以在任意的时机对`resolve`, `reject`方法进行调用
+// 如果说Promise是对值进行抽象的话，Deferred则是对处理还
+// 没有结束的状态或操作进行抽象化的对象，我们也可以从这一
+// 层的区别来理解一下这两者之间的差异。
+// 换句话说，Promise代表了一个对象，这个对象的状态现在还不确定，
+// 但是未来一个时间点它的状态要不变为正常值要不变为异常值，而Deferred
+// 对象表示了一个处理还没有结束的这种事实，在它的处理结束的时候可以通过
+// Promise来取得处理的结果。
+
+// 26. 让Promise等待指定时间
+function delayPromise(ms) {
+  return new Promise( (resolve) => {
+    setTimeout(resolve, ms);
+  })
+}
+
+setTimeout( () => {
+  console.log("已经过了100ms");
+}, 100);
+// == 几乎同样的操作
+delayPromise(100).then( () => {
+  console.log("已经过了100ms");
+});
+
+// 27. Promise.race中的超时
+// 第一种简单实现，挺巧妙的
+// 将delayPromise和其他promise对象一起放到Promise.race中来实现简单的超时机制
+let winnerPromise = new Promise( (resolve) => {
+  setTimeout( () => {
+    console.log("this is winner");
+    resolve("this is winner");
+  }, 4);
+});
+let loserPromise = new Promise( (resolve) => {
+  setTimeout( () => {
+    console.log("this is loser");
+    reject('this is loser');
+  }, 1000);
+});
+// 第一个promise变为resolve后程序停止
+Promise.race([winnerPromise, loserPromise]).then( (value) => {
+  console.log(value); // => 'this is winner'
+});
+
+// 28. 简单超时机制
+// // simple-timeout-promise
+function delayPromise(ms) {
+  return new Promise( (resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+function timeoutPromise(promise, ms) {
+  let timeout = delayPromise(ms).then( () => {
+    throw new Error('Operation timed out after ' + ms + ' ms');
+  });
+  return Promise.race([promise, timeout]);
+}
+
+// 运行示例
+let taskPromise = new Promise( (resolve) => {
+  // 随便一些什么处理
+  let delay = Math.random() * 2000;
+  setTimeout( () => {
+    resolve(delay + "ms");
+  }, delay);
+});
+timeoutPromise(taskPromise, 1000).then( (value) => {
+  console.log("taskPromise在规定时间内结束 : " + value);
+}).catch( (error) => {
+  console.error("发生超时 " + error);
+});
+
+// 29. 定制Error对象
+function copyOwnFrom(target, source) {
+  Object.getOwnPropertyNames(source).forEach( (propName) => {
+    Object.defineProperty(target, propName, Object.getOwnPerpertyDescriptor(source, propName));
+  });
+  return target;
+}
+function TimeoutError() {
+  let superInstance = Error.apply(null, arguments);
+  copyOwnFrom(this, superInstance);
+}
+TimeoutError.prototype = Object.create(Error.prototype);
+TimeoutError.prototype.constructor = TimeoutError;
+
+let promise = new Promise( () => {
+  throw TimeoutError("timeout");
+});
+promise.catch( (error) => {
+  console.error(error instanceof TimeoutError); // true
+});
+
+// 30. 通过超时取消XHR操作
+function cancleableXHR(url) {
+  let req = new XMLHttpRequest();
+  
+  const OK = 200;
+  let promise = new Promise( (resolve, reject) => {
+    req.open('GET', url, true);
+    req.onload = () => {
+      if (req.status === OK) {
+        resolve(req.responseText);
+      } else {
+        reject(new Error(req.statusText));
+      }
+    };
+    req.onerror = () => {
+      reject(new Error(req.statusText));
+    };
+    req.onabort = () => {
+      reject(new Error('abort this request'));
+    };
+    req.send();
+  });
+  
+  let abort = function () {
+    // 如果request还没有结束的话就执行abort
+    // https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+    if (req.readyState !== XMLHttpRequest.UNSENT) {
+      req.abort();
+    }
+  };
+  
+  return {
+    promise,
+    abort
+  } 
+}
+
+// 31. daly-race-cancel-play
+function copyOwnFrom(target, source) {
+  Object.getOwnPropertyNames(source).forEach( (propName) => {
+    Object.defineProperty(target, propName, Object.getOwnPropertyDescriptor(source, propName));
+  });
+  return target;
+}
+function TimeoutError() {
+  let superInstance = Error.apply(null, arguments);
+  copyOwnFrom(this, superInstance);
+}
+TimeoutError.prototype = Object.create(Error.prototype);
+TimeoutError.prototype.constructor = TimeoutError;
+function delayPromise(ms) {
+  return new Promise( (resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+function timeoutPromise(promise, ms) {
+  let timeout = delayPromise(ms).then( () => {
+    return Promise.reject(new TimeoutError('Operation timed out after ' + ms + ' ms'));
+  });
+  return Promise.race([promise, timeout]);
+}
+function cancelableXHR(url) {
+  let req = new XMLHttpRequest();
+  let promise = new Promise( (resolve, reject) => {
+    req.open('GET', url, true);
+    req.onload = () => {
+      if (req.status === 200) {
+        resolve(req.responseText);
+      } else {
+        reject(new Error(req.statusText));
+      }
+    }
+  });
+  let abort = () => {
+    // 如果request还没有结束的话就执行abort
+    // https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+    if (req.readyState !== XMLHttpRequest.UNSENT) {
+      req.abort();
+    }
+  };
+  return {
+    promise,
+    abort
+  }
+}
+let object = cancelableXHR('http://httpbin.org/get');
+// main
+timeoutPromise(object.promise, 1000).then( (contents) => {
+  console.log('Contents', contents);
+}).catch( (error) => {
+  if (error instanceof TimeoutError) {
+    object.abort();
+    return console.log(error);
+  }
+  console.log('XHR Error: ', error);
+});
+
+// 32. cancelableXHR
+let requestMap = {};
+function createXHRPromise(url) {
+  let req = new XMLHttpRequest();
+  let promise = new Promise( (resolve, reject) => {
+    req.open('GET', url, true);
+    req.onreadystatechange = () => {
+      if (req.readyState === XMLHttpRequest.DONE) {
+        delete requestMap[url];
+      }
+    };
+    req.onload = () => {
+      if (req.status === 200) {
+        resolve(req.responseText);
+      } else {
+        reject(new Error(req.statusText));
+      }
+    };
+    req.onerror = () => {
+      reject(new Error(req.statusText));
+    };
+    req.onabort = () => {
+      reject(new Error('abort this req.'));
+    };
+  });
+  requestMap[url] = {
+    promise, 
+    request: req
+  };
+  return promise;
+}
+
+function abortPromise(promise) {
+  if (typeof promise === void 0) {
+    return;
+  }
+  let request;
+  Object.keys(requestMap).some( (url) => {
+    if (requestMap[url].promise === promise) {
+      request = requestMap[url].request;
+      return true;
+    }
+  });
+  if (request != null && request.readyState !== XMLHttpRequest.UNSENT) {
+    request.abort();
+  }
+  
+  return {
+    createXHRPromise,
+    abortPromise
+  }
+}
+import { cancelableXHR } from 'cancelableXHR';
+let xhrPromise = cancelableXHR.createXHRPromise('http://httpbin.org/get'); // 创建包装了XHR的promise对象
+xhrPromise.catch( (error) => {
+  // 调用abort抛出的错误会在此被捕获
+});
+cancelableXHR.abortPromise(xhrPromise); // 取消在之前创建的promise对象的请求
 
