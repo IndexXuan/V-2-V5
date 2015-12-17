@@ -1,7 +1,7 @@
-/*
- * author IndexXuan
- * home   https://github.com/IndexXuan/V-2-V5/blob/master/promise-relearn-with-es2015.js
- * date   2015.12
+/**
+ * author : IndexXuan
+ * date   : 20151212
+ * home   : https://github.com/IndexXuan/V-2-V5/blob/master/promise-relearn-with-es2015.js
  */
 
 let promise = new Promise( (resolve, reject) => {
@@ -55,7 +55,7 @@ Promise.resolve(42).then( (resolve) => {
 new Promise( (resolve) => {
     resolve(42);
 });
-var promise = Promise.resolve($.ajax('/json/comment.json')); // => promise对象
+let promise = Promise.resolve($.ajax('/json/comment.json')); // => promise对象
 promise.then( (res) => {
   console.log('result is: ' + res);
 });
@@ -78,7 +78,7 @@ let promise = new Promise( (resolve) => {
 promise.then( (value) => {
   console.log(value);
 });
-console.log('outer promise');
+console.log('outer promise'); // inner promise --> outer promise -> 666
 
 // 6. promise chain, promise-then-taska-throw-err
 // 本例我们主动throw一个错误，其实如果我们想主动进行onRejected调用，应该
@@ -100,7 +100,7 @@ function finalTask() {
   console.log('Final Task');
 }
 
-var promise = Promise.resolve();
+let promise = Promise.resolve();
 promise
   .then(taskA)
   .then(taskB)
@@ -177,7 +177,7 @@ bPromise.then( (value) => {
 // 通过上面我们可以知道，非链式调用promise#then有很多弊端而且失去了意义，
 // 是反模式的。下面一个例子很好的说明了:
 function badAsyncCall() {
-  var promise = Promise.resolve();
+　let promise = Promise.resolve();
   promise.then(function() {
     // TODO: ...
     return newVal;
@@ -188,7 +188,7 @@ function badAsyncCall() {
 
 // should 
 function anAsyncCall() {
-  var promise = Promise.resolve();
+  let promise = Promise.resolve();
   return promise.then(function() {
     // TODO: ...
     return newVal;
@@ -199,7 +199,7 @@ function anAsyncCall() {
 // promise#then同时处理多个异步请求
 function getURL(url) {
   return new Promise( (resolve, reject) => {
-    var req = new XMLHttpRequest();
+    let req = new XMLHttpRequest();
     req.open('GET', url, true);
     req.onload = () => {
       if (req.status === 200) {
@@ -215,7 +215,7 @@ function getURL(url) {
   });
 }
 
-var request = {
+let request = {
   comment: function getComment() {
     return getURL('http://azu.github.io/promise-book/json/comment.json').then(JSON.parse);
   },
@@ -230,7 +230,7 @@ function main() {
     return results;
   }
   // [] 用来保存初始化的值
-  var pushValue = recordValue.bind(null, []);
+  let pushValue = recordValue.bind(null, []);
   return request.comment().then(pushValue).then(request.people).then(pushValue);
 }
 // 运行的例子
@@ -244,7 +244,7 @@ main().then( (value) => {
 // promise#then同时处理多个异步请求
 function getURL(url) {
   return new Promise( (resolve, reject) => {
-    var req = new XMLHttpRequest();
+    let req = new XMLHttpRequest();
     req.open('GET', url, true);
     req.onload = () => {
       if (req.status === 200) {
@@ -260,7 +260,7 @@ function getURL(url) {
   });
 }
 
-var request = {
+let request = {
   comment: function getComment() {
     return getURL('http://azu.github.io/promise-book/json/comment.json').then(JSON.parse);
   },
@@ -324,13 +324,13 @@ Promise.race([
 });
 
 // 15. another promise-race-demo
-var winnerPromise = new Promise( (resolve, reject) => {
+let winnerPromise = new Promise( (resolve, reject) => {
   setTimeout( () => {
     resolve("I am winner!");
   }, 4);
 });
 
-var loserPromise = new Promise( (resolve, reject) => {
+let loserPromise = new Promise( (resolve, reject) => {
   setTimeout( () => {
     resolve("I am loser");
   }, 1000);
@@ -371,7 +371,7 @@ goodMain( () => {
 // chrome47 pass ok!
 function notifyMessage(message, options, callback) {
   if (Notification && Notification.permission === 'granted') {
-    var notification = new Notification(message, options);
+    let notification = new Notification(message, options);
     callback(null, notification);
   } else if (Notification.requestPermission) {
     Notification.requestPermission( (status) => {
@@ -379,7 +379,7 @@ function notifyMessage(message, options, callback) {
         Notification.permission = status;
       }
       if (status === 'granted') {
-        var notification = new Notification(message, options);
+        let notification = new Notification(message, options);
         callback(null, notification);
       } else {
         callback(new Error('user denied'));
@@ -520,7 +520,7 @@ promise2.catch( (error) => {
 let onRejected = console.log.bind(console);
 let promise = Promise.resolve();
 promise.then( () => {
-  var retPromise = new Promise( (resolve, reject) => {
+  let retPromise = new Promise( (resolve, reject) => {
     reject(new Error("this promise is rejected"));
   });
   return retPromise;
@@ -537,13 +537,13 @@ promise2.then( () => {
 // 由于没有被嵌套在函数中，可以减少一层缩进
 // 反过来没有Promise里的错误逻辑处理
 // 调用resolve和reject的时机，函数都返回了promise对象
-// 由于Deferred包含了promise，所以大体流程还是差不多的，不过Deferred有用对Promise
+// 由于Deferred包含了promise，所以大体流程还是差不多的，不过Deferred有对Promise
 // 进行操作的特权方法，以及高度自由的对流程控制进行定制
 function Deferred() {
   this.promise = new Promise( (resolve, reject) => {
     this._resolve = resolve;
     this._reject = reject;
-  }.bind(this));
+  });
 }
 Deferred.prototype.resolve = function(value) {
   this._resolve.call(this.promise, value);
@@ -557,14 +557,14 @@ function getURL(url) {
   let deferred = new Deferred();
   let req = new XMLHttpRequest();
   req.open('GET', url, true);
-  req.onload = function () {
+  req.onload = () => {
     if (req.status === OK) {
       deferred.resolve(req.responseText);
     } else {
       deferred.reject(new Error(req.statusText));
     }
   };
-  req.onerror = function() {
+  req.onerror = () => {
     deferred.reject(new Error(req.statusText));
   };
   req.send();
@@ -575,13 +575,16 @@ function getURL(url) {
 const URL = 'http://httpbin.org/get';
 getURL(URL).then( (value) => {
   console.log(value);
-}).catch(console.error.bind(console));
+}).catch(console.error); // 简写catch的resolver方法
+// .catch( (error) => {
+//   console.error(error);
+// });
 
 // 25. Deferred与Promise的区别
 new Promise( (resolve, reject) => {
   // 在这里进行promise对象的状态确定
 });
-var deferred = new Deferred();
+let deferred = new Deferred();
 // 可以在任意的时机对`resolve`, `reject`方法进行调用
 // 如果说Promise是对值进行抽象的话，Deferred则是对处理还
 // 没有结束的状态或操作进行抽象化的对象，我们也可以从这一
@@ -712,7 +715,7 @@ function cancleableXHR(url) {
   } 
 }
 
-// 31. daly-race-cancel-play
+// 31. dalay-race-cancel-play
 function copyOwnFrom(target, source) {
   Object.getOwnPropertyNames(source).forEach( (propName) => {
     Object.defineProperty(target, propName, Object.getOwnPropertyDescriptor(source, propName));
@@ -830,4 +833,153 @@ xhrPromise.catch( (error) => {
   // 调用abort抛出的错误会在此被捕获
 });
 cancelableXHR.abortPromise(xhrPromise); // 取消在之前创建的promise对象的请求
+
+// 33. Promise.prototype.done
+// 非es6 Promise/Promise A+等在设计上的规范，很多库实现了各自的done
+if (typeof Promise.prototype.done) {
+  Promise.prototype.done = function(onFulfilled, onRejected) {
+    this.then(onFulfilled, onRejected).catch( (error) => {
+      setTimeout( () => {
+        throw error;
+      }, 0);
+    });
+  };
+} 
+
+// let promise = Promise.resolve();
+// promise.done( () => { 
+//   JSON.parse('this is not json'); // SyntaxError: JSON.parse
+// });
+// 打开控制台可以看见
+
+let promise2 = Promise.resolve();
+promise2.then( () => {
+  JSON.parse("this is not json");
+}).catch( (error) => {
+  console.error(error); // SyntaxError: JSON.parse
+});
+
+/**
+ * 通过比较我们发现，两者之间存在一下不同点
+ * done并不返回promise对象
+ * done中发生的异常会被直接抛给外面，也就是不会进行Promise的错误处理
+ * 放在方法链的最后
+ */
+ 
+ /**
+  * 消失的错误
+  * Promise虽然具备了强大的错误处理机制，但是（调试工具不能顺利运行
+  * 的时候）这个功能会导致人为错误(human error)更加复杂，这也是
+  * 它的一个缺点。
+  * 也许你还记得我们在then or catch中也看到类似的内容
+  */
+  
+function JSONPromise(value) {
+  return new Promise( (resolve) => {
+    resolve(JSON.parse(value));
+  });
+}
+// 运行示例
+let string ="非合法json编码字符串";
+JSONPromise(string).then( (object) => {
+  console.log(object);
+}).catch( (error) => {
+  // => JSON.parse抛出异常时
+  console.error(error);
+});
+// 如果这个解析失败的异常被正确捕获的话则没什么问题，但是如果
+// 编码时忘记处理该异常，那么查找异常发生的源头将变得非常棘手
+// 这就是使用promise需要注意的一面
+let string2 = "非合法json编码字符串";
+JSONPromise(string2).then( (object) => {
+  console.log(object);
+}); // 为主动捕获错误
+
+// 更难查找的错误，比如拼写错误
+let string3 = "{}";
+JSONPromise(string3).then( (object) => {
+  conosle.log(object);
+}); // 未主动捕获错误
+
+/**
+ * 总结:
+ * 学习了非规范定义的方法done，了解了它的用处，基础和实现细节
+ * 以及两个特点:
+ * done中出现的错误会被作为异常抛出
+ * 终结Promise chain
+ * 为捕获异常的调试，随着调试工具或者原生实现以及库的改进，大
+ * 多数情况下已经不是什么大的问题了。
+ */
+
+// 34. 顺序处理promise
+// 还是以xhr为例
+function getURL(url) {
+  return new Promise( (resolve, reject) => {
+    let req = new XMLHttpRequest();
+    req.open('GET', url, true);
+    req.onload = () => {
+      if (req.status === 200) {
+        resolve(req.responseText);
+      } else {
+        reject(new Error(req.statusText));
+      }
+    };
+    req.onerror = () => {
+      reject(new Error(req.statusText));
+    };
+    req.send();
+  });
+}
+const request = {
+  comment: function() {
+    return getURL('http://azu.github.io/promise-book/json/comment.json').then(JSON.parse);
+  },
+  people: function() {
+    return getURL('http://azu.github.io/promise-book/json/people.json').then(JSON.parse);
+  }
+};
+function main() {
+  function recordValue(results, value) {
+    results.push(value);
+    return results;
+  }
+  let pushValue = recordValue.bind(null, []);
+  let tasks = [request.comment, request.people];
+  return tasks.reduce( (promise, task) => {
+    return promise.then(task).then(pushValue);
+  }, Promise.resolve());
+}
+// 运行示例
+main().then( (value) => {
+  console.log(value);
+}).catch( (error) => {
+  console.error(error);
+});
+
+// 虽然简洁，但是在可读性上差了些，下面改进一下
+// 为了能实现一下效果
+`
+ let tasks2 = [request.comment, request.people];
+ sequenceTasks(tasks);
+`
+function sequenceTasks(tasks) {
+  function recordValue(results, value) {
+    results.push(value);
+    return results;
+  }
+  let pushValue = recordValue.bind(null, []);
+  return tasks.reduce( (promise, task) => {
+    return promise.then(task).then(pushValue);
+  }, Promise.resolve());
+}
+
+// 只需要改写main函数
+function main() {
+  return sequenceTasks([request.comment, request.people]);
+}
+main().then( (value) => {
+  console.log(value);
+}).catch( (error) => {
+  console.error(error);
+});
 
