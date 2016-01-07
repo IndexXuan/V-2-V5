@@ -10,7 +10,7 @@ let promise = new Promise( (resolve, reject) => {
   }, 1000);
 });
 
-promise.then((resolve) => {
+promise.then( (resolve) => {
   console.log(resolve);
 }).catch( (reject) => {
   console.log(reject);
@@ -982,4 +982,48 @@ main().then( (value) => {
 }).catch( (error) => {
   console.error(error);
 });
+
+/**
+ *
+ * Promise review 20160107 notes
+ * 1. how to use promise in daily work ( just a way )
+ *   (1) api implement as usually(with callback)
+ *   (2) wrapper as Promise( return new Promise, resolve or reject in callback )
+ *   (3) invoked the function and thenable to deal with any condition
+ *
+ * 2. reduce and promise
+ *   reduce就是一种将对象按顺序迭代的操作，传入操作方法和初始值，所以一个一般的范式
+ *   就是传入Promise.resolve(),操作方法参数第一个为promise
+ *
+ * 3. timeout method, with the help of Promise#race
+ *    实际案例：可取消的xhr，利用error类型判断是超时error的话就abort，代码在700行左右
+ *
+ * 4. 错误处理，then方法只传一个参数那就是只有成功回调，错误会走向下一个带有错误回调
+ *    的then方法或者catch方法，catch方法就是then(null, onReject)的别名
+ *
+ * 5. defer是对状态或操作的抽象，promise是对值的抽象
+ *
+ * 6. Promise.resolve方法有两个作用，一个resolve值的promise简化和变为thenable对象
+ *
+ * 7. es7 async/await, 阻塞直到这个promise的状态从pending到完成（不管成功还是失败）
+ *  (async () => {
+      function delayPromise(timeout) {
+        return new Promise( (resolve, reject) => {
+          setTimeout( () => {
+            resolve('resolve it now')
+          }, timeout)
+        })
+      }
+      
+      console.log('start...')
+      // pending until promise status from pending to fulfilled
+      await delayPromise(10000).then( (resolve, reject) => {
+        console.log(resolve)
+      }).catch( (error) => {
+        console.error(error)
+      })
+      console.log('end, after 10000ms')
+    })()
+ *
+ */
 
