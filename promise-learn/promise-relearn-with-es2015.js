@@ -1,7 +1,7 @@
 /**
  * author : IndexXuan
  * date   : 20151212
- * home   : https://github.com/IndexXuan/V-2-V5/blob/master/promise-relearn-with-es2015.js
+ * home   : https://github.com/IndexXuan/V-2-V5/blob/master/promise-relearn/promise-relearn-with-es2015.js
  */
 
 let promise = new Promise( (resolve, reject) => {
