@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    .layout:after {
+      clear: both;
+      display: table;
+      content: ""
+    }
+    .layout__aside, .layout__main {
+      float: left; 
+    }
+    .layout {
+      padding-left: 210px;
+    }
+    .layout__main {
+      width: 100%;
+      background-color: #ccc;
+    }
+    .layout__aside {
+      width: 200px;
+      margin-left: -210px;
+      background-color: #ddd;
+    }
+    /**
+      原理:
+        left和main都由于容器设置的padding-left而缩到中间，然后让左栏往左复位
+    */
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="layout__aside">侧边栏宽度固定</aside>
+    <div class="layout__main">主内容宽度自适应</div>
+  </div>
+</body>
+</html>

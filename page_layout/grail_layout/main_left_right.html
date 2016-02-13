@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    .clear {
+      clear: both;
+    }
+    .layout__main-wrapper, .layout__aside {
+      float: left;
+    }
+    .layout__main-wrapper {
+      width: 100%;
+    }
+    .layout__main {
+      margin: 0 210px;
+      background-color: #fff;
+    }
+    .layout__aside {
+      width: 200px;
+    }
+    .layout__aside--left {
+      margin-left: -100%; /* 依据父元素宽度 */
+      background-color: red;
+    }
+    .layout__aside--right {
+      margin-left: -200px;
+      background-color: blue;
+    }
+    /**
+      原理:
+        原本float纵向并列排列的三行，
+        由于margin-left负数值的作用，
+        一个刚好回到了上一行左边开头，
+        一个刚好回到上一行最右测
+
+      优点:
+        主内容优先渲染，因为其在dom树较为靠前
+        没有layout这一层包裹元素
+        浮动清除需要在外部元素处理
+        float和margin属性的设置方向相对统一，基本都是一个方向即可
+    */
+  </style>
+</head>
+<body>
+  <div class="layout__main-wrapper">
+    <div class="layout__main">主内容宽度自适应</div>
+  </div>
+  <aside class="layout__aside layout__aside--left">左侧栏目宽度固定</aside>
+  <aside class="layout__aside layout__aside--right">右侧栏目宽度固定</aside>
+  <footer class="clear">底部</footer>
+</body>
+</html>

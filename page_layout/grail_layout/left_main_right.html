@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    .layout::after {
+      clear: both;
+      display: table;
+      content: '';
+    }
+    .layout__aside, .layout__main {
+      float: left;
+      background-color: #fff;
+    }
+    .layout {
+      padding: 0 210px;
+    }
+    .layout__main {
+      width: 100%;
+    }
+    .layout__aside {
+      width: 200px;
+    }
+    .layout__aside--left {
+      margin-left: -210px;
+      background-color: red;
+    }
+    .layout__aside--right {
+      margin-right: -210px;
+      float: right; /* key */
+      background-color: blue;
+    }
+    /**
+      原理:
+        容器设置padding，让left,main,right缩到中间，然后让left往左，right往右
+    */
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="layout__aside layout__aside--left">左侧栏宽度固定</aside>
+    <div class="layout__main">主内容宽度自适应</div>
+    <aside class="layout__aside layout__aside--right">右侧栏宽度固定</aside>
+  </div>
+</body>
+</html>
