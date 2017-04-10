@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<style>
+    .wrapper {
+        display: flex;
+        align-items: center;
+    }
+    .line {
+        display: inline-block;
+        vertical-align: middle;
+        width: 100px;
+        background-color: #333;
+        height: 2px;
+    }
+    .line.rotate {
+        transform: rotate(45deg);
+        transform-origin: right;
+    }
+    .box {
+        display: inline-block;
+        vertical-align: middle;
+        border-left: 2px solid #333;
+        width: 100px;
+    }
+    ul.item-wrapper {
+        overflow: hidden;
+    }
+</style>
+<body>
+    <div class="wrapper">
+        <div class="line rotate"></div>
+        <div class="line"></div>
+        <div class="box">
+            <ul class="item-wrapper">
+                <li>item1</li>
+                <li>item2</li>
+                <li>item3</li>
+                <li>item4</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -56,7 +56,7 @@ var varible = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 
 var pid = /^(\d{15}|\d{18})$/; // id card
 var mphone = /\d{11}/; // cell number
-var phone = /\d{3, 4}-\d{7, 8}/; // tele number
+var phone = /\d{3,4}-\d{7,8}/; // tele number
 
 mphone.test("15705213381");
 phone.test("0516-85818009");

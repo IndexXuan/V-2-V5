@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    #demo {
+        width: 800px;
+        height: 600px;
+        margin: 0 auto;
+        background-color: whiteSmoke;
+        display: block;
+        position: relative;
+    }
+</style>
+</head>
+<body>
+    <button onclick="drawPolygon()">开始画多边形</button>
+    <button onclick="drawRect()">开始画矩形</button>
+    <button onclick="cancelDrawable()">停止画布响应</button>
+    <button onclick="clearCanvas()">清空画布</button>
+    <button onclick="printStore()">打印store</button>
+    <canvas id="demo" width="800px" height="600px">
+        your browser seems not support canvas
+    </canvas>
+    <script src="./line.js"></script>
+</body>
+</html>

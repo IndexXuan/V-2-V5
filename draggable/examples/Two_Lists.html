@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>demo</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    #app {
+        text-align: center;
+    }
+    .drag-area {
+        width: 32%;
+        min-height: 10px;
+        display: inline-block;
+        vertical-align: top;
+    }
+    .drag-area.green {
+        display: block!important;
+        margin: 0 auto!important;
+        width: 200px;
+    }
+    .drag-area span {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+    }
+    .drag-area ul {
+        margin: 0;
+        padding: 0;
+    }
+    .drag-area ul li {
+        display: inline-block;
+        width: 100%;
+        border-bottom: 1px solid;
+        background-color: currentColor;
+    }
+    .drag-area ul li::first-line {
+        color: white;
+    }
+    h2 {
+        text-align: center;
+    }
+    .red {
+        color: red;
+    }
+    .yellow {
+        color: orange;
+    }
+    .blue {
+        color: blue;
+    }
+    .green {
+        color: green;
+    }
+</style>   
+</head>
+<body>
+    
+    <div id="app">
+    <h1>Vue Dragable For - 拖拖拽拽</h1>
+
+        <div class="drag-area red">
+            <span>魏</span>
+            <ul>
+                <li v-dragable-for="element in wei" 
+                    options='{ 
+                        "disabled": false,
+                        "group": { "name": "all", "pull": true, "put": true },
+                        "delay": 10, 
+                        "animation": 0,
+                        "sort": true 
+                    }' 
+                    track-by="$index"
+                >
+                    {{ element.name }}
+                </li>
+            </ul>
+        </div>
+
+        <div class="drag-area yellow">
+            <span>蜀国五虎将</span>
+            <ul class="">
+                <li v-dragable-for="element in shu"
+                    options='{ 
+                        "disabled": false,
+                        "group": { "name": "all", "pull": true, "put": true },
+                        "delay": 10,
+                        "animation": 0
+                    }' 
+                    track-by="$index"
+                >
+                    {{ element.name }}
+                </li>
+            </ul>
+        </div>
+
+        <div class="drag-area blue">
+            <ul>
+                <span>吴</span>
+                <li v-dragable-for="element in wu"
+                    options='{ 
+                        "disabled": false,
+                        "group": { "name": "all", "pull": true, "put": true },
+                        "delay": 10, 
+                        "animation": 0,
+                        "sort": true 
+                    }' 
+                    track-by="$index"
+                >
+                    {{ element.name }}
+                </li>
+            </ul>
+        </div>
+
+        <h2>兵营</h2>
+        <div class="drag-area green">
+            <ul class="">
+                <li v-dragable-for="element in bing"
+                    options='{ 
+                        "disabled": false,
+                        "group": { "name": "all", "pull": "clone", "put": false },
+                        "delay": 10, 
+                        "animation": 0,
+                        "sort": true 
+                    }' 
+                    track-by="$index"
+                >
+                    {{ element.name }}
+                </li>
+            </ul>
+        </div>
+        <button @click="add">造兵</button>
+
+    <!--<div class="normal">-->
+    <!--    <h2>List 1 v-for</h2>-->
+    <!--    <div>-->
+    <!--        <div v-for="element in list1" >{{element.name}}</div>-->
+    <!--     </div>-->
+
+    <!--    <h2>List 2 v-for</h2>-->
+    <!--    <div>-->
+    <!--        <div v-for="element in list2" >{{element.name}}</div>-->
+    <!--    </div>-->
+    <!--</div>-->
+
+    <!--<a href="index.html">See basic example</a>-->
+    <!--<a href="Two_Lists_Clone.html">See clone element example</a>-->
+    <!--<a href="Two_Lists_Clone_If.html">See clone v-if element example</a>-->
+
+    <script type="text/javascript" src="../node_modules/vue/dist/vue.min.js"></script>
+    <script type="text/javascript" src="./libs/lodash/lodash.js"></script>
+    <script type="text/javascript" src="./libs/Sortable/Sortable.js"></script>
+    <script type="text/javascript" src="../src/vuedragablefor.js"></script>
+    <script type="text/javascript" src="./script/complex.js"></script>
+
+</div>
+</body>
+</html>

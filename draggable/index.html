@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<style>
+    #app > ul li{
+        display: inline-block;
+        width: 100%;
+        border-bottom: 1px solid;
+        background-color: currentColor;
+    }
+    #app > ul li::first-line {
+        color: white;
+    }
+    .red {
+        color: red;
+    }
+    .green {
+        color: green;
+    }
+    .blue {
+        color: blue;
+    }
+</style>
+</head>
+<body>
+    <div id="app">
+        <pre>{{ shu | json 4 }}</pre>
+        <pre>{{ wei | json 4 }}</pre>
+        <pre>{{ wu | json 4 }}</pre>
+        <ul class="red">
+            <template v-dragable-for="people in shu" track-by="$index" options='{ "group": { "name": "all", "pull": true } }'>
+                <li>{{ people.name }}</li>
+            </template>
+        </ul>
+        <ul class="blue">
+            <template v-dragable-for="people in wei" track-by="$index" options='{ "group": { "name": "all", "pull": true } }'>
+                <li>{{ people.name }}</li>
+            </template>
+        </ul>
+        <ul class="green">
+            <template v-dragable-for="people in wu" track-by="$index" options='{ "group": { "name": "all", "pull": true } }'>
+                <li>{{ people.name }}</li>
+            </template>
+        </ul>
+    </div>
+    <script src="./node_modules/vue/dist/vue.min.js"></script>
+    <script src="./node_modules/lodash/lodash.js"></script>
+    <script src="./node_modules/sortablejs/Sortable.js"></script>
+    <script src="./node_modules/vuedraggable/src/vuedragablefor.js"></script>
+    <script src="./index.js"></script>
+</body>
+</html>

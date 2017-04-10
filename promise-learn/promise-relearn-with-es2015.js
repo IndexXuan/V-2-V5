@@ -4,21 +4,21 @@
  * home   : https://github.com/IndexXuan/V-2-V5/blob/master/promise-relearn/promise-relearn-with-es2015.js
  */
 
-let promise = new Promise( (resolve, reject) => {
-  setTimeout( () => {
+let promise = new Promise((resolve, reject) => {
+  setTimeout(() => {
     reject("Error!");
   }, 1000);
 });
 
-promise.then( (resolve) => {
+promise.then((resolve) => {
   console.log(resolve);
-}).catch( (reject) => {
+}).catch((reject) => {
   console.log(reject);
 });
 
 // 2. simple ajax get 
-function getUrl(url) {
-  return new Promise( (resolve, reject) => {
+function getUrl (url) {
+  return new Promise((resolve, reject) => {
     let req = new XMLHttpRequest();
     req.open('GET', url, true);
     req.onload = () => {
@@ -37,9 +37,9 @@ function getUrl(url) {
 
 const url = 'http://httpbin.org/get';
 // const url = 'http://httpbin.org/status/500';
-getUrl(url).then( (res) => {
+getUrl(url).then((res) => {
   console.log('result: ' + res);
-}).catch( (err) => {
+}).catch((err) => {
   console.log('Oh error comes: ' + err);
 });
 
@@ -48,22 +48,22 @@ getUrl(url).then( (res) => {
 // （1）new Promise的快捷方式
 // （2）将thenable对象转化为Promise对象
 // thenable对象就好像是array-like这类对象一样，是具备then方法的对象，例如jqXHR
-Promise.resolve(42).then( (resolve) => {
+Promise.resolve(42).then((resolve) => {
   console.log(resolve);
 });
 // 等价于
-new Promise( (resolve) => {
+new Promise((resolve) => {
     resolve(42);
 });
 let promise = Promise.resolve($.ajax('/json/comment.json')); // => promise对象
-promise.then( (res) => {
+promise.then((res) => {
   console.log('result is: ' + res);
 });
 
 // 4. Promise.reject同上，说不定你在debug时用得上
 Promise.reject(new Error("Error comes!"));
 // 等价于
-new Promise( (resolve, reject) => {
+new Promise((resolve, reject) => {
     reject(new Error("Error comes!"));
 });
 
@@ -71,11 +71,11 @@ new Promise( (resolve, reject) => {
 // 明明看起来应该同步调用的then方法却被异步调用，这是为了统一而且合乎规范
 // 避免意料之外的不符合预期的问题出现，即使不在promise，人们有时也会手动
 // setTimeout(fn, 0)
-let promise = new Promise( (resolve) => {
+let promise = new Promise((resolve) => {
   console.log('inner promise');
   resolve(666);
 });
-promise.then( (value) => {
+promise.then((value) => {
   console.log(value);
 });
 console.log('outer promise'); // inner promise --> outer promise -> 666
@@ -83,20 +83,20 @@ console.log('outer promise'); // inner promise --> outer promise -> 666
 // 6. promise chain, promise-then-taska-throw-err
 // 本例我们主动throw一个错误，其实如果我们想主动进行onRejected调用，应该
 // 返回一个Rejected状态的promise对象
-function taskA() {
+function taskA () {
   console.log('Task A');
   throw new Error('Throw error @ Task A');
 }
 
-function taskB() {
+function taskB () {
   console.log('Task B'); // 不会被调用
 }
 
-function onRejected(error) {
+function onRejected (error) {
   console.log('error comes: ' + error); // 'Throw error @ Task A'
 }
 
-function finalTask() {
+function finalTask () {
   console.log('Final Task');
 }
 
@@ -109,38 +109,38 @@ promise
 
 // 7. 如何在promise chain中传递参数
 // promise-then-passing-value in chain
-function increment(value) {
+function increment (value) {
   return value + 1;
 }
 
-function doubleUp(value) {
+function doubleUp (value) {
   return value * 2;
 }
 
-function output(value) {
+function output (value) {
   console.log(value); // => (1 + 1) * 2
 }
 
 let p = Promise.resolve(1);
-p.then(increment).then(doubleUp).then(output).catch( (err) => { console.log(err); });
+p.then(increment).then(doubleUp).then(output).catch((err) => { console.log(err); });
 
 // 8. catch在ie8等es3环境下是保留字，不可用作方法名，因为需要中括号法
 let promise = Promise.reject(new Error("message"));
-promise.catch( (err) => {
+promise.catch((err) => {
   console.error(err);
 });
 // 很多工具可以帮助转化为promise["catch"]形式，或者你自己留心
 
 // 9. 每次then方法调用都返回新promise而不是在原来promise对象上进行一连串链式调用
-let aPromise = new Promise( (resolve) => {
+let aPromise = new Promise((resolve) => {
   resolve(100);
 });
 
-let thenPromise = aPromise.then( (value) => {
+let thenPromise = aPromise.then((value) => {
   console.log(value);
 });
 
-let catchPromise = thenPromise.catch( (err) => {
+let catchPromise = thenPromise.catch((err) => {
   console.error(err);
 });
 
@@ -149,34 +149,34 @@ console.log(thenPromise !== catchPromise); // => true
 
 // 10. promise chain需要注意的一些地方
 // 对同一个promise对象同时调用`then`方法
-let aPromise = new Promise( (resolve) => {
+let aPromise = new Promise((resolve) => {
   resolve(100);
 });
-aPromise.then( (value) => {
+aPromise.then((value) => {
   return value * 2;
 });
-aPromise.then( (value) => {
+aPromise.then((value) => {
   return value * 2;
 });
-aPromise.then( (value) => {
+aPromise.then((value) => {
   console.log("1: " + value); // => 100
 });
 
 // 对`then`进行promise chain方式进行调用
-let bPromise = new Promise( (resolve) => {
+let bPromise = new Promise((resolve) => {
   resolve(100);
 });
-bPromise.then( (value) => {
+bPromise.then((value) => {
   return value * 2;
-}).then( (value) => {
+}).then((value) => {
   return value * 2;
-}).then( (value) => {
+}).then((value) => {
   console.log("2: " + value); // 100 * 2 * 2
 });
 
 // 通过上面我们可以知道，非链式调用promise#then有很多弊端而且失去了意义，
 // 是反模式的。下面一个例子很好的说明了:
-function badAsyncCall() {
+function badAsyncCall () {
 　let promise = Promise.resolve();
   promise.then(function() {
     // TODO: ...
@@ -187,9 +187,9 @@ function badAsyncCall() {
 }
 
 // should 
-function anAsyncCall() {
+function anAsyncCall () {
   let promise = Promise.resolve();
-  return promise.then(function() {
+  return promise.then(function () {
     // TODO: ...
     return newVal;
   });
@@ -198,7 +198,7 @@ function anAsyncCall() {
 // 11. mutli xhr with Promise#then
 // promise#then同时处理多个异步请求
 function getURL(url) {
-  return new Promise( (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     let req = new XMLHttpRequest();
     req.open('GET', url, true);
     req.onload = () => {
@@ -216,34 +216,34 @@ function getURL(url) {
 }
 
 let request = {
-  comment: function getComment() {
+  comment: function getComment () {
     return getURL('http://azu.github.io/promise-book/json/comment.json').then(JSON.parse);
   },
-  people: function getPeople() {
+  people: function getPeople () {
     return getURL('http://azu.github.io/promises-book/json/people.json').then(JSON.parse);
   }
 };
 
-function main() {
-  function recordValue(results, value) {
+function main () {
+  function recordValue (results, value) {
     results.push(value);
     return results;
   }
-  // [] 用来保存初始化的值
+  // [] 用来保存初始化的值，用bind来修饰方法，此处补充固化一个参数
   let pushValue = recordValue.bind(null, []);
   return request.comment().then(pushValue).then(request.people).then(pushValue);
 }
 // 运行的例子
-main().then( (value) => {
+main().then((value) => {
   console.log(value);
-}).catch( (error) => {
+}).catch((error) => {
   console.error(error);
 });
 
 // 12. Promise#all
 // promise#then同时处理多个异步请求
-function getURL(url) {
-  return new Promise( (resolve, reject) => {
+function getURL (url) {
+  return new Promise((resolve, reject) => {
     let req = new XMLHttpRequest();
     req.open('GET', url, true);
     req.onload = () => {
@@ -261,10 +261,10 @@ function getURL(url) {
 }
 
 let request = {
-  comment: function getComment() {
+  comment: function getComment () {
     return getURL('http://azu.github.io/promise-book/json/comment.json').then(JSON.parse);
   },
-  people: function getPeople() {
+  people: function getPeople () {
     return getURL('http://azu.github.io/promises-book/json/people.json').then(JSON.parse);
   }
 };
@@ -273,17 +273,17 @@ function main() {
   return Promise.all([request.comment(), request.people()]);
 }
 // 运行示例
-main().then( (value) => {
+main().then((value) => {
   console.log(value); // 与Promise.all传进来的任务顺序一致
-}).catch( (error) => {
+}).catch((error) => {
   console.log(error);
 });
 
 // 13. Promise-all-timers
 // `delay`毫秒后执行resolve
-function timerPromisefy(delay) {
-  return new Promise( (resolve) => {
-    setTimeout( () => {
+function timerPromisefy (delay) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
       resolve(delay);
     }, delay);
   });
@@ -295,7 +295,7 @@ Promise.all([
   timerPromisefy(32),
   timerPromisefy(64),
   timerPromisefy(128)
-]).then( (values) => {
+]).then((values) => {
   console.log(Date.now() - startDate + 'ms');
   // 大约128ms
   console.log(values); // [1, 23, 64, 128]
@@ -303,9 +303,9 @@ Promise.all([
 
 // 14. Promise#race
 // `delay`毫秒后执行resolve
-function timerPromisefy(delay) {
-  return new Promise( (resolve) => {
-    setTimeout( () => {
+function timerPromisefy (delay) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
       resolve(delay);
     }, delay);
   });
@@ -317,47 +317,47 @@ Promise.race([
   timerPromisefy(32),
   timerPromisefy(64),
   timerPromisefy(128)
-]).then( (values) => {
+]).then((values) => {
   console.log(Date.now() - startDate + 'ms');
   // 大约128ms
   console.log(values); // [1, 23, 64, 128]
 });
 
 // 15. another promise-race-demo
-let winnerPromise = new Promise( (resolve, reject) => {
-  setTimeout( () => {
+let winnerPromise = new Promise((resolve, reject) => {
+  setTimeout(() => {
     resolve("I am winner!");
   }, 4);
 });
 
-let loserPromise = new Promise( (resolve, reject) => {
-  setTimeout( () => {
+let loserPromise = new Promise((resolve, reject) => {
+  setTimeout(() => {
     resolve("I am loser");
   }, 1000);
 });
 
 // 最快的promise转变为fulfilled就执行
-Promise.race([winnerPromise, loserPromise]).then( (value) => {
+Promise.race([winnerPromise, loserPromise]).then((value) => {
   console.log(value); // 'I am winner'
 });
 
 // 16. bad throw
 // 不能进行错误处理的onRejected
-function throwError(value) {
+function throwError (value) {
   // throw error
   throw new Error(value);
 }
 
-function badMain(onRejected) {
+function badMain (onRejected) {
   return Promise.resolve(42).then(throwError, onRejected);
 }
-function goodMain(onRejected) {
+function goodMain (onRejected) {
   return Promise.resolve(42).then(throwError).catch(onRejected);
 }
-badMain( () => {
+badMain(() => {
   console.log("BAD");
 });
-goodMain( () => {
+goodMain(() => {
   console.log("GOOD");
 });
 
@@ -369,12 +369,12 @@ goodMain( () => {
 // 18. Promise应用
 // wrapper the web notification api, no promise
 // chrome47 pass ok!
-function notifyMessage(message, options, callback) {
+function notifyMessage (message, options, callback) {
   if (Notification && Notification.permission === 'granted') {
     let notification = new Notification(message, options);
     callback(null, notification);
   } else if (Notification.requestPermission) {
-    Notification.requestPermission( (status) => {
+    Notification.requestPermission((status) => {
       if (Notification.permission !== status) {
         Notification.permission = status;
       }
@@ -400,12 +400,12 @@ notifyMessage('Hi', {}, (error, notification) => {
 });
 
 // 19. 用Promise来封装web Notification API
-function notifyMessage(message, options, callback) {
+function notifyMessage (message, options, callback) {
   if (Notification && Notification.permission === 'granted') {
     let notification = new Notification(message, options);
     callback(null, notification);
   } else if (Notification.requestPermission) {
-    Notification.requestPermission( (status) =>{
+    Notification.requestPermission((status) =>{
       if (Notification.permission !== status) {
         Notification.permission = status;
       }
@@ -420,8 +420,8 @@ function notifyMessage(message, options, callback) {
     callback(new Error('does\' support Notification API'));
   }
 }
-function notifyMessageAsPromise(message, options) {
-  return new Promise( (resolve, reject) => {
+function notifyMessageAsPromise (message, options) {
+  return new Promise((resolve, reject) => {
     notifyMessage(message, options, (error, notification) => {
       if (error) {
         reject(error);
@@ -432,19 +432,19 @@ function notifyMessageAsPromise(message, options) {
   });
 }
 // 运行示例
-notifyMessageAsPromise("Hi!").then( (notification) => {
+notifyMessageAsPromise("Hi!").then((notification) => {
   console.log(notification); // 通知对象
-}).catch( (error) => {
+}).catch((error) => {
   console.error(error);
 });
 
 // 20. Web Notification API as thenable
-function notifyMessage(message, options, callback) {
+function notifyMessage (message, options, callback) {
   if (Notification && Notification.permission === 'granted') {
     let notification = new Notification(message, options);
     callback(null, notification);
   } else if (Notification.requestPermission) {
-    Notification.requestPermission( (status) => {
+    Notification.requestPermission((status) => {
       if (Notification.permission !== status) {
         Notification.permission = status;
       }
@@ -460,9 +460,9 @@ function notifyMessage(message, options, callback) {
   }
 }
 // 返回`thenable`
-function notifyMessageAsThenable(message, options) {
+function notifyMessageAsThenable (message, options) {
   return {
-    then(resolve, reject) {
+    then (resolve, reject) {
       notifyMessage(message, options, (error, notification) => {
         if (error) {
           reject(error);
@@ -474,9 +474,9 @@ function notifyMessageAsThenable(message, options) {
   };
 }
 // 运行示例
-Promise.resolve(notifyMessageAsThenable("message")).then( (notification) => {
+Promise.resolve(notifyMessageAsThenable("message")).then((notification) => {
   console.log(notification); // 通知对象
-}).catch( (error) => {
+}).catch((error) => {
   console.error(error);
 });
 
@@ -486,29 +486,29 @@ Promise.resolve(notifyMessageAsThenable("message")).then( (notification) => {
 // 使用，但是我们必须牢牢记住Thenable是Promise中一个非常重要的概念
 const Q = require("Q");
 // 这是ES6的promise对象
-let promise = new Promise( (resolve) => {
+let promise = new Promise((resolve) => {
   resolve(1);
 });
 // 变换为Q promise对象
-Q(promise).then( (value) => {
+Q(promise).then((value) => {
   console.log(value);
-}).finally( () => {
+}).finally(() => {
   console.log("finally");
 });
 
 // 22. 使用reject而不是throw
-let promise = new Promise( (resolve, reject) => {
+let promise = new Promise((resolve, reject) => {
   throw new Error("message");
 });
-promise.catch( (error) => {
+promise.catch((error) => {
   console.error(error); // => "message"
 });
 
 // 可以改写为这样
-let promise2 = new Promise( (resolve, reject) => {
+let promise2 = new Promise((resolve, reject) => {
   reject(new Error("message"));
 });
-promise2.catch( (error) => {
+promise2.catch((error) => {
   console.error(error); // "message"
 });
 
@@ -519,8 +519,8 @@ promise2.catch( (error) => {
 // 23. 在then中使用reject
 let onRejected = console.log.bind(console);
 let promise = Promise.resolve();
-promise.then( () => {
-  let retPromise = new Promise( (resolve, reject) => {
+promise.then(() => {
+  let retPromise = new Promise((resolve, reject) => {
     reject(new Error("this promise is rejected"));
   });
   return retPromise;
@@ -528,7 +528,7 @@ promise.then( () => {
 
 let onRejected2 = console.error.bind(console);
 let promise2 = Promise.resolve();
-promise2.then( () => {
+promise2.then(() => {
   return Promise.reject(new Error("this promise is rejected in then"));
 }).catch(onRejected);
 
@@ -539,20 +539,20 @@ promise2.then( () => {
 // 调用resolve和reject的时机，函数都返回了promise对象
 // 由于Deferred包含了promise，所以大体流程还是差不多的，不过Deferred有对Promise
 // 进行操作的特权方法，以及高度自由的对流程控制进行定制
-function Deferred() {
-  this.promise = new Promise( (resolve, reject) => {
+function Deferred () {
+  this.promise = new Promise((resolve, reject) => {
     this._resolve = resolve;
     this._reject = reject;
   });
 }
-Deferred.prototype.resolve = function(value) {
+Deferred.prototype.resolve = function (value) {
   this._resolve.call(this.promise, value);
 };
-Deferred.prototype.reject = function(reason) {
+Deferred.prototype.reject = function (reason) {
   this._reject.call(this.promise, reason);
 };
 
-function getURL(url) {
+function getURL (url) {
   const OK = 200;
   let deferred = new Deferred();
   let req = new XMLHttpRequest();
@@ -573,15 +573,15 @@ function getURL(url) {
 
 // 运行示例
 const URL = 'http://httpbin.org/get';
-getURL(URL).then( (value) => {
+getURL(URL).then((value) => {
   console.log(value);
 }).catch(console.error); // 简写catch的resolver方法
-// .catch( (error) => {
+// .catch((error) => {
 //   console.error(error);
 // });
 
 // 25. Deferred与Promise的区别
-new Promise( (resolve, reject) => {
+new Promise((resolve, reject) => {
   // 在这里进行promise对象的状态确定
 });
 let deferred = new Deferred();
@@ -595,71 +595,71 @@ let deferred = new Deferred();
 // Promise来取得处理的结果。
 
 // 26. 让Promise等待指定时间
-function delayPromise(ms) {
-  return new Promise( (resolve) => {
+function delayPromise (ms) {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   })
 }
 
-setTimeout( () => {
+setTimeout(() => {
   console.log("已经过了100ms");
 }, 100);
 // == 几乎同样的操作
-delayPromise(100).then( () => {
+delayPromise(100).then(() => {
   console.log("已经过了100ms");
 });
 
 // 27. Promise.race中的超时
 // 第一种简单实现，挺巧妙的
 // 将delayPromise和其他promise对象一起放到Promise.race中来实现简单的超时机制
-let winnerPromise = new Promise( (resolve) => {
-  setTimeout( () => {
+let winnerPromise = new Promise((resolve) => {
+  setTimeout(() => {
     console.log("this is winner");
     resolve("this is winner");
   }, 4);
 });
-let loserPromise = new Promise( (resolve) => {
-  setTimeout( () => {
+let loserPromise = new Promise((resolve) => {
+  setTimeout(() => {
     console.log("this is loser");
     reject('this is loser');
   }, 1000);
 });
 // 第一个promise变为resolve后程序停止
-Promise.race([winnerPromise, loserPromise]).then( (value) => {
+Promise.race([winnerPromise, loserPromise]).then((value) => {
   console.log(value); // => 'this is winner'
 });
 
 // 28. 简单超时机制
 // // simple-timeout-promise
-function delayPromise(ms) {
-  return new Promise( (resolve) => {
+function delayPromise (ms) {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
-function timeoutPromise(promise, ms) {
-  let timeout = delayPromise(ms).then( () => {
+function timeoutPromise (promise, ms) {
+  let timeout = delayPromise(ms).then(() => {
     throw new Error('Operation timed out after ' + ms + ' ms');
   });
   return Promise.race([promise, timeout]);
 }
 
 // 运行示例
-let taskPromise = new Promise( (resolve) => {
+let taskPromise = new Promise((resolve) => {
   // 随便一些什么处理
   let delay = Math.random() * 2000;
-  setTimeout( () => {
+  setTimeout(() => {
     resolve(delay + "ms");
   }, delay);
 });
-timeoutPromise(taskPromise, 1000).then( (value) => {
+timeoutPromise(taskPromise, 1000).then((value) => {
   console.log("taskPromise在规定时间内结束 : " + value);
-}).catch( (error) => {
+}).catch((error) => {
   console.error("发生超时 " + error);
 });
 
 // 29. 定制Error对象
-function copyOwnFrom(target, source) {
-  Object.getOwnPropertyNames(source).forEach( (propName) => {
+function copyOwnFrom (target, source) {
+  Object.getOwnPropertyNames(source).forEach((propName) => {
     Object.defineProperty(target, propName, Object.getOwnPerpertyDescriptor(source, propName));
   });
   return target;
@@ -671,19 +671,19 @@ function TimeoutError() {
 TimeoutError.prototype = Object.create(Error.prototype);
 TimeoutError.prototype.constructor = TimeoutError;
 
-let promise = new Promise( () => {
+let promise = new Promise(() => {
   throw TimeoutError("timeout");
 });
-promise.catch( (error) => {
+promise.catch((error) => {
   console.error(error instanceof TimeoutError); // true
 });
 
 // 30. 通过超时取消XHR操作
-function cancleableXHR(url) {
+function cancleableXHR (url) {
   let req = new XMLHttpRequest();
   
   const OK = 200;
-  let promise = new Promise( (resolve, reject) => {
+  let promise = new Promise((resolve, reject) => {
     req.open('GET', url, true);
     req.onload = () => {
       if (req.status === OK) {
@@ -716,32 +716,32 @@ function cancleableXHR(url) {
 }
 
 // 31. dalay-race-cancel-play
-function copyOwnFrom(target, source) {
-  Object.getOwnPropertyNames(source).forEach( (propName) => {
+function copyOwnFrom (target, source) {
+  Object.getOwnPropertyNames(source).forEach((propName) => {
     Object.defineProperty(target, propName, Object.getOwnPropertyDescriptor(source, propName));
   });
   return target;
 }
-function TimeoutError() {
+function TimeoutError () {
   let superInstance = Error.apply(null, arguments);
   copyOwnFrom(this, superInstance);
 }
 TimeoutError.prototype = Object.create(Error.prototype);
 TimeoutError.prototype.constructor = TimeoutError;
-function delayPromise(ms) {
-  return new Promise( (resolve) => {
+function delayPromise (ms) {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
-function timeoutPromise(promise, ms) {
-  let timeout = delayPromise(ms).then( () => {
+function timeoutPromise (promise, ms) {
+  let timeout = delayPromise(ms).then(() => {
     return Promise.reject(new TimeoutError('Operation timed out after ' + ms + ' ms'));
   });
   return Promise.race([promise, timeout]);
 }
-function cancelableXHR(url) {
+function cancelableXHR (url) {
   let req = new XMLHttpRequest();
-  let promise = new Promise( (resolve, reject) => {
+  let promise = new Promise((resolve, reject) => {
     req.open('GET', url, true);
     req.onload = () => {
       if (req.status === 200) {
@@ -765,9 +765,9 @@ function cancelableXHR(url) {
 }
 let object = cancelableXHR('http://httpbin.org/get');
 // main
-timeoutPromise(object.promise, 1000).then( (contents) => {
+timeoutPromise(object.promise, 1000).then((contents) => {
   console.log('Contents', contents);
-}).catch( (error) => {
+}).catch((error) => {
   if (error instanceof TimeoutError) {
     object.abort();
     return console.log(error);
@@ -777,9 +777,9 @@ timeoutPromise(object.promise, 1000).then( (contents) => {
 
 // 32. cancelableXHR
 let requestMap = {};
-function createXHRPromise(url) {
+function createXHRPromise (url) {
   let req = new XMLHttpRequest();
-  let promise = new Promise( (resolve, reject) => {
+  let promise = new Promise((resolve, reject) => {
     req.open('GET', url, true);
     req.onreadystatechange = () => {
       if (req.readyState === XMLHttpRequest.DONE) {
@@ -807,12 +807,12 @@ function createXHRPromise(url) {
   return promise;
 }
 
-function abortPromise(promise) {
+function abortPromise (promise) {
   if (typeof promise === void 0) {
     return;
   }
   let request;
-  Object.keys(requestMap).some( (url) => {
+  Object.keys(requestMap).some((url) => {
     if (requestMap[url].promise === promise) {
       request = requestMap[url].request;
       return true;
@@ -829,7 +829,7 @@ function abortPromise(promise) {
 }
 import { cancelableXHR } from 'cancelableXHR';
 let xhrPromise = cancelableXHR.createXHRPromise('http://httpbin.org/get'); // 创建包装了XHR的promise对象
-xhrPromise.catch( (error) => {
+xhrPromise.catch((error) => {
   // 调用abort抛出的错误会在此被捕获
 });
 cancelableXHR.abortPromise(xhrPromise); // 取消在之前创建的promise对象的请求
@@ -837,9 +837,9 @@ cancelableXHR.abortPromise(xhrPromise); // 取消在之前创建的promise对象
 // 33. Promise.prototype.done
 // 非es6 Promise/Promise A+等在设计上的规范，很多库实现了各自的done
 if (typeof Promise.prototype.done) {
-  Promise.prototype.done = function(onFulfilled, onRejected) {
-    this.then(onFulfilled, onRejected).catch( (error) => {
-      setTimeout( () => {
+  Promise.prototype.done = function (onFulfilled, onRejected) {
+    this.then(onFulfilled, onRejected).catch((error) => {
+      setTimeout(() => {
         throw error;
       }, 0);
     });
@@ -847,15 +847,15 @@ if (typeof Promise.prototype.done) {
 } 
 
 // let promise = Promise.resolve();
-// promise.done( () => { 
+// promise.done(() => { 
 //   JSON.parse('this is not json'); // SyntaxError: JSON.parse
 // });
 // 打开控制台可以看见
 
 let promise2 = Promise.resolve();
-promise2.then( () => {
+promise2.then(() => {
   JSON.parse("this is not json");
-}).catch( (error) => {
+}).catch((error) => {
   console.error(error); // SyntaxError: JSON.parse
 });
 
@@ -874,16 +874,16 @@ promise2.then( () => {
   * 也许你还记得我们在then or catch中也看到类似的内容
   */
   
-function JSONPromise(value) {
-  return new Promise( (resolve) => {
+function JSONPromise (value) {
+  return new Promise((resolve) => {
     resolve(JSON.parse(value));
   });
 }
 // 运行示例
 let string ="非合法json编码字符串";
-JSONPromise(string).then( (object) => {
+JSONPromise(string).then((object) => {
   console.log(object);
-}).catch( (error) => {
+}).catch((error) => {
   // => JSON.parse抛出异常时
   console.error(error);
 });
@@ -891,13 +891,13 @@ JSONPromise(string).then( (object) => {
 // 编码时忘记处理该异常，那么查找异常发生的源头将变得非常棘手
 // 这就是使用promise需要注意的一面
 let string2 = "非合法json编码字符串";
-JSONPromise(string2).then( (object) => {
+JSONPromise(string2).then((object) => {
   console.log(object);
 }); // 为主动捕获错误
 
 // 更难查找的错误，比如拼写错误
 let string3 = "{}";
-JSONPromise(string3).then( (object) => {
+JSONPromise(string3).then((object) => {
   conosle.log(object);
 }); // 未主动捕获错误
 
@@ -913,8 +913,8 @@ JSONPromise(string3).then( (object) => {
 
 // 34. 顺序处理promise
 // 还是以xhr为例
-function getURL(url) {
-  return new Promise( (resolve, reject) => {
+function getURL (url) {
+  return new Promise((resolve, reject) => {
     let req = new XMLHttpRequest();
     req.open('GET', url, true);
     req.onload = () => {
@@ -931,28 +931,28 @@ function getURL(url) {
   });
 }
 const request = {
-  comment: function() {
+  comment: function () {
     return getURL('http://azu.github.io/promise-book/json/comment.json').then(JSON.parse);
   },
-  people: function() {
+  people: function () {
     return getURL('http://azu.github.io/promise-book/json/people.json').then(JSON.parse);
   }
 };
-function main() {
-  function recordValue(results, value) {
+function main () {
+  function recordValue (results, value) {
     results.push(value);
     return results;
   }
   let pushValue = recordValue.bind(null, []);
   let tasks = [request.comment, request.people];
-  return tasks.reduce( (promise, task) => {
+  return tasks.reduce((promise, task) => {
     return promise.then(task).then(pushValue);
   }, Promise.resolve());
 }
 // 运行示例
-main().then( (value) => {
+main().then((value) => {
   console.log(value);
-}).catch( (error) => {
+}).catch((error) => {
   console.error(error);
 });
 
@@ -962,24 +962,24 @@ main().then( (value) => {
  let tasks2 = [request.comment, request.people];
  sequenceTasks(tasks);
 `
-function sequenceTasks(tasks) {
-  function recordValue(results, value) {
+function sequenceTasks (tasks) {
+  function recordValue (results, value) {
     results.push(value);
     return results;
   }
   let pushValue = recordValue.bind(null, []);
-  return tasks.reduce( (promise, task) => {
+  return tasks.reduce((promise, task) => {
     return promise.then(task).then(pushValue);
   }, Promise.resolve());
 }
 
 // 只需要改写main函数
-function main() {
+function main () {
   return sequenceTasks([request.comment, request.people]);
 }
-main().then( (value) => {
+main().then((value) => {
   console.log(value);
-}).catch( (error) => {
+}).catch((error) => {
   console.error(error);
 });
 
@@ -993,7 +993,7 @@ main().then( (value) => {
  *
  * 2. reduce and promise
  *   reduce就是一种将对象按顺序迭代的操作，传入操作方法和初始值，所以一个一般的范式
- *   就是传入Promise.resolve(),操作方法参数第一个为promise
+ *   就是传入Promise.resolve(),操作方法参数第一个为promise，第二个为数组item
  *
  * 3. timeout method, with the help of Promise#race
  *    实际案例：可取消的xhr，利用error类型判断是超时error的话就abort，代码在700行左右
@@ -1008,8 +1008,8 @@ main().then( (value) => {
  * 7. es7 async/await, 阻塞直到这个promise的状态从pending到完成（不管成功还是失败）
  *  (async () => {
       function delayPromise(timeout) {
-        return new Promise( (resolve, reject) => {
-          setTimeout( () => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
             resolve('resolve it now')
           }, timeout)
         })
@@ -1017,9 +1017,9 @@ main().then( (value) => {
       
       console.log('start...')
       // pending until promise status from pending to fulfilled
-      await delayPromise(10000).then( (resolve, reject) => {
+      await delayPromise(10000).then((resolve, reject) => {
         console.log(resolve)
-      }).catch( (error) => {
+      }).catch((error) => {
         console.error(error)
       })
       console.log('end, after 10000ms')

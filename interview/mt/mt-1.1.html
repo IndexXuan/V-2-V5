@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    .arrow {
+      width: 0;
+      height: 0;
+      border: 32px solid transparent;
+      border-bottom-width: 50px;
+      border-bottom-color: red;
+    }
+    .arrow:before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 8px;
+      width: 0;
+      height: 0;
+      border: 32px solid transparent;
+      border-bottom-color: #fff;
+      border-bottom-width: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="arrow"></div>
+  </div>
+</body>
+</html>

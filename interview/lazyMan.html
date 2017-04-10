@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script>
+    /*
+    * lazyMan('zz').eat('lunch').sleep('3').eat('dinner')
+
+    // 输出:
+    //  Hi!This is zz!
+
+    //  Eat lunch~
+
+    //  有3s间隔等待
+
+    //  Wake for 3s!
+
+    //  Eat dinner~
+    */
+
+    'use strict'
+
+    class _LazyMan {
+        constructor (name) {
+            this.queue = []
+            var me = this
+
+            let fn = ((name) => {
+                return () => {
+                    console.log(`Hi! This is ${name}`)
+                    me.next()
+                }
+            })(name)
+            this.queue.push(fn)
+
+            // 核心，必须等待所有链式调用结束开始刷队列，才能启动成功
+            setTimeout(() => {
+               this.next()
+            })
+        }
+
+        eat (sth) {
+            var me = this
+            let fn = ((sth) => {
+                return () => {
+                    console.log(`eat ${sth}`)
+                    me.next()
+                }
+            })(sth)
+            this.queue.push(fn)
+            return this
+        }
+
+        sleep (timeout) {
+            var me = this
+            let fn = ((timeout) => {
+                return () => {
+                    setTimeout(() => {
+                        console.log(`wait for ${timeout} s`)
+                        this.next()
+                    }, timeout * 1000)
+                }
+            })(timeout)
+            this.queue.push(fn)
+            return this
+        }
+
+        next () {
+            let task = this.queue.shift()
+            task && task()
+        }
+    }
+
+    let LazyMan = (name) => {
+        return new _LazyMan(name)
+    }
+    window.l = LazyMan
+
+    LazyMan('zz').eat('lunch').sleep('3').eat('dinner')
+
+</script>
+</body>
+</html>

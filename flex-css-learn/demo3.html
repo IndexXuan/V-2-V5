@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        .container {
+            display: flex;
+            width: 105px;
+            height: 105px;
+            background-color: #fff;
+            border: 1px solid #eee;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+        }
+        .item {
+            width: 25px;
+            height: 25px;
+            padding: 5px;
+            margin: 5px;
+            background-color: black;
+            border-radius: 50%;
+        }
+        .item:nth-child(1) {
+            align-self: center;
+        }
+        .item:nth-child(2) {
+            align-self: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="item"></div>
+        <div class="item"></div>
+    </div>
+</body>
+</html>

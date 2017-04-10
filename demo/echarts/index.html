@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<style>
+    #chart {
+        width: 800px;
+        height: 400px;
+        margin: 0 auto;
+    }
+</style>
+</head>
+<body>
+<div id="chart"></div>
+<script src="http://cdn.bootcss.com/echarts/3.3.0/echarts.common.js"></script>
+<script>
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('chart'));
+
+    // 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: 'ECharts 入门示例'
+        },
+        tooltip: {},
+        legend: {
+            data:['销量', '潜力', 'ROI']
+        },
+        xAxis: {
+            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+        },
+        yAxis: {
+        },
+        dataZoom: [
+            {
+                type: 'slider',
+                show: true,
+                xAxisIndex: [0],
+                start: 0,
+                end: 100
+            },
+            {
+                type: 'slider',
+                show: true,
+                yAxisIndex: [0],
+                left: '93%',
+                start: 0,
+                end: 100
+            },
+            {
+                type: 'inside',
+                xAxisIndex: [0],
+                start: 1,
+                end: 35
+            },
+            {
+                type: 'inside',
+                yAxisIndex: [0],
+                start: 29,
+                end: 36
+            }
+        ],
+        series: [{
+            name: '销量',
+            type: 'bar',
+            data: [5, 20, 36, 10, 10, 20]
+        }, {
+            name: '潜力',
+            type: 'bar',
+            data: [50, 60, 44, 40, 30, 40]
+        }, {
+            name: 'ROI',
+            type: 'bar',
+            data: [.34, .38, .78, .98, .98, .99]
+        }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    myChart.on('legendselectchanged', function (param) {
+        /*
+        param: {
+            name: "潜力"
+            selected: {
+                '销量': true,
+                '潜力': true,
+                'ROI': false
+            },
+            type: "legendselectchanged"
+        }
+        */
+        if (param.name === 'ROI') {
+            disabledOneLegend(this, '销量')
+            disabledOneLegend(this, '潜力')
+        } else {
+            enabledOneLegend(this, '销量')
+            enabledOneLegend(this, '潜力')
+            disabledOneLegend(this, 'ROI')
+        }
+        highlight(this, { seriesIndex: 0, seriesName: 'ROI', dataIndex: 1, name: '羊毛衫'})
+        showTips(this, { seriesIndex: 0, dataIndex: 0, name: 'ROI', position: ['50%', '50%'] })
+    })
+    function disabledOneLegend (chartInstance, name) {
+        chartInstance.dispatchAction({
+            type: 'legendUnSelect',
+            name: name
+        })
+    }
+    function enabledOneLegend (chartInstance, name) {
+        chartInstance.dispatchAction({
+            type: 'legendSelect',
+            name: name
+        })
+    }
+    function highlight (chartInstance, actionOptions) {
+        chartInstance.dispatchAction({
+            type: 'highlight',
+            seriesIndex: actionOptions.seriesIndex,
+            seriesName: actionOptions.seriesName,
+            dataIndex: actionOptions.dataIndex,
+            name: actionOptions.name
+        })
+    }
+    function showTips (chartInstance, opts) {
+        chartInstance.dispatchAction({
+            type: 'showTip',
+            seriesIndex: opts.seriesIndex,
+            dataIndex: opts.dataIndex,
+            name: opts.name
+        })
+    }
+</script>
+</body>
+</html>

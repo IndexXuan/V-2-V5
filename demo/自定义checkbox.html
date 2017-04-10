@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>最小化成本自定义checkbox</title>
+<!-- scss
+思路：
+    1. 边框，用border
+    2. 内边距，用box-shadow
+    3. 中心区，用background-color
+
+核心：
+    -webkit-appearance: none; 才可以设置样式
+
+最终：
+    三色叠加营造效果，配合动画
+
+<style lang="scss">
+input[type=checkbox] {
+
+  @MAIN_COLOR: #5bc0de;
+  @UNCHECKED_COLOR: #ffffff;
+  @CHECKED_COLOR: @MAIN_COLOR;
+  @BORDER_COLOR: #cccccc;
+  @DISABLED_COLOR: #eeeeee;
+  @DISABLED_CHECKED_COLOR: #aaaaaa;
+
+
+  transition: all 0.5s;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  border-radius: 0.16em;
+  -webkit-appearance: none;
+  background: @UNCHECKED_COLOR;
+  box-shadow: inset 0 0 0 0.5em @UNCHECKED_COLOR;
+  border: @BORDER_COLOR 0.05em solid;
+  vertical-align: middle;
+  
+  &:checked {
+    background: @CHECKED_COLOR;
+    border-color: @CHECKED_COLOR;
+    box-shadow: inset 0 0 0 0.16em @UNCHECKED_COLOR;
+  }
+  &:hover {
+    border-color: @CHECKED_COLOR;
+  }
+  &:focus {
+    outline: none;
+    border-color: @CHECKED_COLOR;
+  }
+  
+  &[disabled] {
+    box-shadow: inset 0 0 0 0.5em @DISABLED_COLOR;
+    border-color: @BORDER_COLOR;
+    
+    &:checked {
+      background: @DISABLED_CHECKED_COLOR;
+      box-shadow: inset 0 0 0 0.16em @DISABLED_COLOR;
+    }
+  }
+}
+
+.demo {
+  font-size: 30px;
+}
+</style>
+
+ scss end -->
+<style>
+input[type=checkbox] {
+  transition: all 0.5s;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  border-radius: 0.16em;
+  -webkit-appearance: none;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 0.5em #ffffff;
+  border: #cccccc 0.05em solid;
+  vertical-align: middle;
+}
+input[type=checkbox]:checked {
+  background: #5bc0de;
+  border-color: #5bc0de;
+  box-shadow: inset 0 0 0 0.16em #ffffff;
+}
+input[type=checkbox]:hover {
+  border-color: #5bc0de;
+}
+input[type=checkbox]:focus {
+  outline: none;
+  border-color: #5bc0de;
+}
+input[type=checkbox][disabled] {
+  box-shadow: inset 0 0 0 0.5em #eeeeee;
+  border-color: #cccccc;
+}
+input[type=checkbox][disabled]:checked {
+  background: #aaaaaa;
+  box-shadow: inset 0 0 0 0.16em #eeeeee;
+}
+
+.demo {
+    font-size: 30px; /* 控制大小只在于此 */
+}
+</style>
+</head>
+<body>
+    <label>
+        <input class="demo" type="checkbox" />因缺
+    </label>
+    <label>
+        <input class="demo" type="checkbox" disabled />因缺
+    </label>
+    <label>
+        <input class="demo" type="checkbox" disabled checked />因缺
+    </label>
+</body>
+</html>
